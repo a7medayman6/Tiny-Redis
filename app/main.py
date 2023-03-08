@@ -1,5 +1,7 @@
-# Uncomment this to pass the first stage
 import socket
+
+from Classes.ResponseParser import ResponseParser
+from Classes.ResponseSerializer import ResponseSerializer
 
 PORT = 6379
 
@@ -18,39 +20,32 @@ def main():
     
 def handleConnection(conn, addr):
     msg = conn.recv(1024)
-    decoded_msg = msg.decode()
     
-    print(f"[Log] Client {addr} sent: {msg}, decoded message: {decoded_msg}")
-
-    if not decoded_msg:
+    if not msg:
         return -2
     
-    if 'ping' in decoded_msg:
-        return handlePingCommand(conn)
-    else:
-        print(f"[Error]")
-        return -1    
+    decoded_msg = ResponseParser(msg.decode()).parse()
 
-
-def extractMessage(msg):
-    decoded_msg = msg.decode('utf-8')
-    decoded_msg = decoded_msg.replace('\r', '').replace('\n', '')
-    # print(decoded_msg)
+    print(f"[Log] Client {addr} sent: {msg}, decoded message: {decoded_msg}")
     
-    return decoded_msg
+    for command in decoded_msg:
+        handleCommand(conn, command)
+    
 
-
-def handlePingCommand(conn):
-    try:
+def handleCommand(conn, command):
+    if command.upper() == 'PING':
         print(f"[Log] Sending response to a ping command ...")
-        conn.send(b"+PONG\r\n")
-        print(f"[Log] Response sent successfully.")
-        return 0
-    except:
-        print(f"[Error] Failed to send response to the client.")
-        return -1
-
-
+        try:
+            conn.send(ResponseSerializer.serialize_string("PONG"))
+            print(f"[Log] Response sent successfully.")
+            return 0
+        except:
+            print(f"[Error] Failed to send response to client.")
+            return -1
+    else:
+        print(f"[Error] Unhandled Command")
+        return -2
+    
 
 
 def initServer(port = 6379):
