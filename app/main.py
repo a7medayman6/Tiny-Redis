@@ -5,19 +5,26 @@ PORT = 6379
 
 def main():
     server_socket = initServer(PORT)
-    
-    while True:
+
+    while True:    
         conn, addr = server_socket.accept() # wait for client
         print(f"[Log] Client {addr} Connected to the server on port {PORT}.")
-        handleConnection(conn, addr)
 
+        while True:
+            success = handleConnection(conn, addr)
+
+            if success == -2:
+                break
     
 def handleConnection(conn, addr):
-    msg = conn.recv(4096)
-    decoded_msg = msg.decode('utf-8')
-    extractMessage(msg)
-    print(f"[Log] Client {addr} sent: {msg}")
+    msg = conn.recv(1024)
+    decoded_msg = msg.decode()
+    
+    print(f"[Log] Client {addr} sent: {msg}, decoded message: {decoded_msg}")
 
+    if not decoded_msg:
+        return -2
+    
     if 'ping' in decoded_msg:
         return handlePingCommand(conn)
     else:
@@ -28,7 +35,7 @@ def handleConnection(conn, addr):
 def extractMessage(msg):
     decoded_msg = msg.decode('utf-8')
     decoded_msg = decoded_msg.replace('\r', '').replace('\n', '')
-    print(decoded_msg)
+    # print(decoded_msg)
     
     return decoded_msg
 
