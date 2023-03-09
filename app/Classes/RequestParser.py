@@ -1,7 +1,7 @@
 class RequestParser:
     def __init__(self, buffer: str) -> None:
         self.handlers = {
-            "": self.__parse_string,
+            "+": self.__parse_string,
             "-": self.__parse_error,
             ":": self.__parse_integer,
             "$": self.__parse_bulk_string,
