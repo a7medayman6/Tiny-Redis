@@ -1,4 +1,4 @@
-class ResponseParser:
+class RequestParser:
     def __init__(self, buffer: str) -> None:
         self.handlers = {
             "": self.__parse_string,

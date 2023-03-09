@@ -2,7 +2,7 @@ import socket
 
 import threading
 
-from app.Classes.ResponseParser import ResponseParser
+from app.Classes.RequestParser import RequestParser
 
 from app.Classes.CommandHandler import CommandHandler
 
@@ -21,18 +21,21 @@ def main():
         
 def handleClient(conn, addr):
     while True:
-        msg = conn.recv(BUFFER_SIZE)
+        try:
+            msg = conn.recv(BUFFER_SIZE)
 
-        if not msg:
-            return -2
-        
-        decoded_msg = ResponseParser(msg.decode()).parse()
+            if not msg:
+                return -2
+            
+            decoded_msg = RequestParser(msg.decode()).parse()
 
-        print(f"[Log] Client {addr} sent: {msg}, decoded message: {decoded_msg}")
-        
-        for command in decoded_msg:
-            CommandHandler.handleCommand(conn, command)
-        
+            print(f"[Log] Client {addr} sent: {msg}, decoded message: {decoded_msg}")
+            
+            CommandHandler.handleMessage(conn, decoded_msg)
+
+        except ConnectionError:
+            break
+
 
 def initServer(port = 6379):
     
