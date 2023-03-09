@@ -31,10 +31,17 @@ def handleClient(conn, addr):
 
             print(f"[Log] Client {addr} sent: {msg}, decoded message: {decoded_msg}")
             
+            if decoded_msg == -1:
+                raise ValueError
+            
             CommandHandler.handleMessage(conn, decoded_msg)
 
         except ConnectionError:
+            print(f"[Error] Connection Error.")
             break
+        except ValueError:
+            print(f"[Error] The message is not formatted correctly.")
+            continue
 
 
 def initServer(port = 6379):

@@ -3,7 +3,7 @@ from app.Classes.ResponseSerializer import ResponseSerializer
 class CommandHandler(object):
     @staticmethod
     def handleMessage(connection, msg):
-
+        
         command = msg[0].upper()
         args = msg[1:]
 
