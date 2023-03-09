@@ -1,7 +1,7 @@
 class ResponseSerializer:
     @staticmethod
     def serialize_string(data: str) -> bytes:
-        return f"{data}\r\n".encode()
+        return f"+{data}\r\n".encode()
 
     @staticmethod
     def serialize_error(data: str) -> bytes:
