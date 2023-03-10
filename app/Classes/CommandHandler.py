@@ -4,7 +4,7 @@ class CommandHandler(object):
     @staticmethod
     def handleMessage(connection, msg):
         
-        msg_array = msg.split(" ")
+        msg_array = msg
 
         command = msg_array[0].upper()
         
