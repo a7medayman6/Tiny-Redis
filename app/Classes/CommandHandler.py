@@ -4,11 +4,9 @@ class CommandHandler(object):
     @staticmethod
     def handleMessage(connection, msg):
         
-        msg_array = msg
-
-        command = msg_array[0].upper()
+        command = msg[0].upper()
         
-        if len(msg_array) > 1: args = msg_array[1:]
+        if len(msg) > 1: args = msg[1:]
         else: args = ""
         
         print(command)
