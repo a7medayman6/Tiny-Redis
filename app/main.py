@@ -6,20 +6,24 @@ from app.Classes.RequestParser import RequestParser
 
 from app.Classes.CommandHandler import CommandHandler
 
+from app.Classes.Storage import Storage
+
 PORT = 6379
 BUFFER_SIZE = 1024
 
 def main():
     server_socket = initServer(PORT)
 
+    storage = Storage()
+
     while True:    
         conn, addr = server_socket.accept() # wait for client
 
         print(f"[Log] Client {addr} Connected to the server on port {PORT}.")
         
-        threading.Thread(target=handleClient, args=(conn, addr)).start()
+        threading.Thread(target=handleClient, args=(conn, addr, storage)).start()
         
-def handleClient(conn, addr):
+def handleClient(conn, addr, storage):
     while True:
         try:
             msg = conn.recv(BUFFER_SIZE)
@@ -34,7 +38,7 @@ def handleClient(conn, addr):
             if decoded_msg == -1:
                 raise ValueError
             
-            CommandHandler.handleMessage(conn, decoded_msg)
+            CommandHandler.handleMessage(conn, decoded_msg, storage)
 
         except ConnectionError:
             print(f"[Error] Connection Error.")
