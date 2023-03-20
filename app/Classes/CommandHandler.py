@@ -40,13 +40,13 @@ class CommandHandler(object):
         print(f"[Log] Getting the value of the key: {key}")
         
         if key not in storage._data:
-            return "nil"
+            return ""
         
         value, expiry = storage._data[key][0], storage._data[key][1]
 
-        if time.time() * 1000 > expiry:
+        if expiry != -1 and time.time() * 1000 > expiry:
             storage._data[key] = None
-            return "nil"
+            return ""
 
         return str(value)
 
