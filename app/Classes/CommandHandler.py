@@ -1,6 +1,7 @@
+import time
+
 from app.Classes.ResponseSerializer import ResponseSerializer
 
-# echo -en "\x2b\x50\x49\x4e\x47\x0d\x0a" | nc 127.0.0.1 6379
 class CommandHandler(object):
     @staticmethod
     def handleMessage(connection, msg, storage):
@@ -41,7 +42,12 @@ class CommandHandler(object):
         if key not in storage._data:
             return "nil"
         
-        value = storage._data[key]
+        value, expiry = storage._data[key][0], storage._data[key][1]
+
+        if time.time() * 1000 > expiry:
+            storage._data[key] = None
+            return "nil"
+
         return str(value)
 
     def handleSet(connection, args, storage):
@@ -50,9 +56,12 @@ class CommandHandler(object):
             return ""
         
         key, value = args[0], args[1]
+        expiry = time.time() * 1000 + float(args[3]) if len(args) > 3 and args[2].lower() == 'px' and args[3].isnumeric() else -1
+        
         print(f"[Log] Setting the key: {key} to the value: {value} ...")
         
-        storage._data[key] = value
+        storage._data[key] = (value, expiry)
+
         return "OK"
     
         
