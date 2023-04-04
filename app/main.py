@@ -24,32 +24,29 @@ def main():
         threading.Thread(target=handleClient, args=(conn, addr, storage)).start()
         
 def handleClient(conn, addr, storage):
-    while True: 
-        print("> ", end = '')
+    while True:
+        try:
+            msg = conn.recv(BUFFER_SIZE)
 
-        while True:
-            try:
-                msg = conn.recv(BUFFER_SIZE)
+            if not msg:
+                print(f"[LOG] Client Hang Up Connection.")
+                return -2
+            
+            decoded_msg = RequestParser(msg.decode()).parse()
 
-                if not msg:
-                    print(f"[LOG] Client Hang Up Connection.")
-                    return -2
-                
-                decoded_msg = RequestParser(msg.decode()).parse()
+            print(f"[Log] Client {addr} sent: {msg}, decoded message: {decoded_msg}")
+            
+            if decoded_msg == -1:
+                raise ValueError
+            
+            CommandHandler.handleMessage(conn, decoded_msg, storage)
 
-                print(f"[Log] Client {addr} sent: {msg}, decoded message: {decoded_msg}")
-                
-                if decoded_msg == -1:
-                    raise ValueError
-                
-                CommandHandler.handleMessage(conn, decoded_msg, storage)
-
-            except ConnectionError:
-                print(f"[Error] Connection Error.")
-                break
-            except ValueError:
-                print(f"[Error] The message is not formatted correctly.")
-                continue
+        except ConnectionError:
+            print(f"[Error] Connection Error.")
+            break
+        except ValueError:
+            print(f"[Error] The message is not formatted correctly.")
+            continue
 
 
 def initServer(port = 6379):
