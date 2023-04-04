@@ -1,6 +1,7 @@
-# Redis In-Memory Database Cache Implementation in Python
+# Tiny Redis
+## Redis In-Memory Database Implementation in Python
 
-This is an implementation for [CodeCrafters.io](https://codecrafters.io) Build you own Redis challenge.
+This is an implementation for [CodeCrafters.io](https://codecrafters.io) [Build you own Redis challenge](https://codecrafters.io/challenges/redis).
 
 [![progress-banner](https://app.codecrafters.io/progress/redis/053a4d30-bb2a-4d3b-bfe5-12a9b6aa2b34)](https://app.codecrafters.io/users/a7medayman6)
 
@@ -20,7 +21,7 @@ This is an implementation for [CodeCrafters.io](https://codecrafters.io) Build y
 - Python >= 3.8 installed
 - Clone the repository
 ```bash
-git clone https://github.com/a7medayman6/codecrafters-redis-python.git
+git clone https://github.com/a7medayman6/Tiny-Redis/
 ```
 - Spawn a redis server
 ```bash
